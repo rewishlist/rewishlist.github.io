@@ -7,6 +7,7 @@ import styled from "@emotion/styled";
 import Map from "./Map";
 import ItemBox from "./ItemBox";
 import Fuse from "fuse.js";
+import qs from "qs";
 
 const OPTIONS = {
   shouldSort: true,
@@ -63,13 +64,17 @@ const LOCATIONS = [
 
 function App() {
   const [search, setSearch] = useState(null);
-  const [data, setData] = useState(LOCATIONS);
+  const [data, setData] = useState([]);
   var fuse = new Fuse(ITEMS, OPTIONS);
 
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(function(position) {});
     }
+
+    setTimeout(() => {
+      setData(LOCATIONS);
+    }, 2000);
   }, []);
 
   const onHover = key => {
@@ -91,6 +96,8 @@ function App() {
   //   console.log("search", search);
   // };
 
+  const userItem = getUserItem();
+
   return (
     <AppContainer container spacing={3}>
       <Global styles={GlobalStyles} />
@@ -106,6 +113,13 @@ function App() {
           />
         </ItemContainer>
         <Grid item xs={12}>
+          {userItem && (
+            <ItemBox
+              onHoverEnter={onHover("user")}
+              onHoverLeave={onLeave}
+              {...userItem}
+            />
+          )}
           {ITEMS.map((item, key) => (
             <ItemBox
               onHoverEnter={onHover(key)}
@@ -123,11 +137,16 @@ function App() {
         </Grid>
       </Grid>
       <MapContainer item xs={9}>
-        {data ? <Map data={data} userLocation={MY_LOCATION} /> : null}
+        <Map data={data} userLocation={MY_LOCATION} />
       </MapContainer>
     </AppContainer>
   );
 }
+
+function getUserItem() {
+  console.log(qs.parse(window.location.search.substr(1)));
+}
+
 const GlobalStyles = {
   html: {
     height: "100%"
