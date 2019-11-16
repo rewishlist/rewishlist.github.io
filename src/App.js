@@ -10,21 +10,31 @@ import Map from "./Map.js";
 const DATA_URL =
   "https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/arc/counties.json"; // eslint-disable-line
 
+const MY_LOCATION = [24.8254933, 60.1866719];
+
+const LOCATION_1 = [24.804905, 60.182799];
+const LOCATION_2 = [24.852896, 60.179485];
+const LOCATION_3 = [24.934519, 60.16687];
+
 function App() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([
+    { from: MY_LOCATION, to: LOCATION_1 },
+    { from: MY_LOCATION, to: LOCATION_2 },
+    { from: MY_LOCATION, to: LOCATION_3 }
+  ]);
   useEffect(() => {
-    fetch(DATA_URL)
-      .then(response => response.json())
-      .then(({ features }) => {
-        setData(features);
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        console.log(position.coords.latitude, position.coords.longitude);
       });
+    }
 
     window.update = () => {
-      fetch(DATA_URL)
-        .then(response => response.json())
-        .then(({ features }) => {
-          setData(features);
-        });
+      setData([
+        { from: MY_LOCATION, to: LOCATION_1 },
+        { from: MY_LOCATION, to: LOCATION_2, highlighted: true },
+        { from: MY_LOCATION, to: LOCATION_3 }
+      ]);
     };
   }, []);
 
@@ -51,7 +61,7 @@ function App() {
         </Grid>
       </Grid>
       <MapContainer item xs={9}>
-        {data ? <Map data={data} /> : null}
+        {data ? <Map data={data} userLocation={MY_LOCATION} /> : null}
       </MapContainer>
     </AppContainer>
   );

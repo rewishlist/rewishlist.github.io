@@ -20,6 +20,9 @@ export const inFlowColors = [
   [12, 44, 132]
 ];
 
+const DEFAULT_COLOR = [0, 0, 0];
+const HIGHLIGHTED_COLOR = [106, 255, 121];
+
 export const outFlowColors = [
   [255, 255, 178],
   [254, 217, 118],
@@ -31,9 +34,7 @@ export const outFlowColors = [
 ];
 
 const INITIAL_VIEW_STATE = {
-  longitude: -100,
-  latitude: 40.7,
-  zoom: 3,
+  zoom: 11,
   maxZoom: 15,
   pitch: 30,
   bearing: 30
@@ -44,117 +45,115 @@ class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hoveredCounty: null,
+      // hoveredCounty: null,
       // Set default selection to San Francisco
-      selectedCounty: null,
+      // selectedCounty: null,
       isMounted: false
     };
-    this._onHoverCounty = this._onHoverCounty.bind(this);
-    this._onSelectCounty = this._onSelectCounty.bind(this);
-    this._renderTooltip = this._renderTooltip.bind(this);
+    // this._onHoverCounty = this._onHoverCounty.bind(this);
+    // this._onSelectCounty = this._onSelectCounty.bind(this);
+    // this._renderTooltip = this._renderTooltip.bind(this);
   }
 
-  componentDidMount() {
-    if (!this.state.isMounted) {
-      this.setState({ isMounted: true });
-      this._recalculateArcs(this.props.data);
-    }
-  }
+  // componentDidMount() {
+  //   if (!this.state.isMounted) {
+  //     this.setState({ isMounted: true });
+  //     this._recalculateArcs(this.props.data);
+  //   }
+  // }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.data !== this.props.data && this.state.isMounted) {
-      this._recalculateArcs(nextProps.data);
-    }
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   if (nextProps.data !== this.props.data && this.state.isMounted) {
+  //     this._recalculateArcs(nextProps.data);
+  //   }
+  // }
 
-  _onHoverCounty({ x, y, object }) {
-    this.setState({ x, y, hoveredCounty: object });
-  }
+  // _onHoverCounty({ x, y, object }) {
+  //   this.setState({ x, y, hoveredCounty: object });
+  // }
 
-  _onSelectCounty({ object }) {
-    this._recalculateArcs(this.props.data, object);
-  }
+  // _onSelectCounty({ object }) {
+  //   this._recalculateArcs(this.props.data, object);
+  // }
 
-  _renderTooltip() {
-    const { x, y, hoveredCounty } = this.state;
-    return (
-      hoveredCounty && (
-        <div className="tooltip" style={{ left: x, top: y }}>
-          {hoveredCounty.properties.name}
-        </div>
-      )
-    );
-  }
+  // _renderTooltip() {
+  //   const { x, y, hoveredCounty } = this.state;
+  //   return (
+  //     hoveredCounty && (
+  //       <div className="tooltip" style={{ left: x, top: y }}>
+  //         {hoveredCounty.properties.name}
+  //       </div>
+  //     )
+  //   );
+  // }
 
-  _recalculateArcs(data, selectedCounty = this.state.selectedCounty) {
-    if (!data) {
-      return;
-    }
-    if (!selectedCounty) {
-      selectedCounty = data.find(f => f.properties.name === "Los Angeles, CA");
-    }
-    const { flows, centroid } = selectedCounty.properties;
+  // _recalculateArcs(data, selectedCounty = this.state.selectedCounty) {
+  //   if (!data) {
+  //     return;
+  //   }
+  //   if (!selectedCounty) {
+  //     selectedCounty = data.find(f => f.properties.name === "Los Angeles, CA");
+  //   }
+  //   const { flows, centroid } = selectedCounty.properties;
 
-    const arcs = Object.keys(flows).map(toId => {
-      const f = data[toId];
-      return {
-        source: centroid,
-        target: f.properties.centroid,
-        value: flows[toId]
-      };
-    });
+  //   const arcs = Object.keys(flows).map(toId => {
+  //     const f = data[toId];
+  //     return {
+  //       source: centroid,
+  //       target: f.properties.centroid,
+  //       value: flows[toId]
+  //     };
+  //   });
 
-    const scale = scaleQuantile()
-      .domain(arcs.map(a => Math.abs(a.value)))
-      .range(inFlowColors.map((c, i) => i));
+  //   const scale = scaleQuantile()
+  //     .domain(arcs.map(a => Math.abs(a.value)))
+  //     .range(inFlowColors.map((c, i) => i));
 
-    arcs.forEach(a => {
-      a.gain = Math.sign(a.value);
-      a.quantile = scale(Math.abs(a.value));
-    });
+  //   arcs.forEach(a => {
+  //     a.gain = Math.sign(a.value);
+  //     a.quantile = scale(Math.abs(a.value));
+  //   });
 
-    if (this.props.onSelectCounty) {
-      this.props.onSelectCounty(selectedCounty);
-    }
+  //   if (this.props.onSelectCounty) {
+  //     this.props.onSelectCounty(selectedCounty);
+  //   }
 
-    this.setState({ arcs, selectedCounty });
-  }
+  //   this.setState({ arcs, selectedCounty });
+  // }
 
   _renderLayers() {
     const { data, strokeWidth = 2 } = this.props;
 
     return [
-      new GeoJsonLayer({
-        id: "geojson",
-        data,
-        stroked: false,
-        filled: true,
-        getFillColor: [0, 0, 0, 0],
-        onHover: this._onHoverCounty,
-        onClick: this._onSelectCounty,
-        pickable: true
-      }),
       new ArcLayer({
         id: "arc",
-        data: this.state.arcs,
-        getSourcePosition: d => d.source,
-        getTargetPosition: d => d.target,
+        data,
+        coef: 0.5,
+        getSourcePosition: d => d.from,
+        getTargetPosition: d => d.to,
         getSourceColor: d =>
-          (d.gain > 0 ? inFlowColors : outFlowColors)[d.quantile],
+          d.highlighted ? HIGHLIGHTED_COLOR : DEFAULT_COLOR,
         getTargetColor: d =>
-          (d.gain > 0 ? outFlowColors : inFlowColors)[d.quantile],
+          d.highlighted ? HIGHLIGHTED_COLOR : DEFAULT_COLOR,
         getWidth: strokeWidth
       })
     ];
   }
 
   render() {
-    const { mapStyle = "mapbox://styles/mapbox/light-v9" } = this.props;
+    const {
+      mapStyle = "mapbox://styles/mapbox/light-v9",
+      userLocation
+    } = this.props;
 
     return (
       <DeckGL
         layers={this._renderLayers()}
-        initialViewState={INITIAL_VIEW_STATE}
+        initialViewState={{
+          ...INITIAL_VIEW_STATE,
+          longitude: userLocation[0],
+          latitude: userLocation[1]
+        }}
         controller={true}
       >
         <StaticMap
