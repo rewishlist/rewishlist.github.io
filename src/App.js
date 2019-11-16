@@ -6,6 +6,17 @@ import { Global, css, jsx } from "@emotion/core";
 import styled from "@emotion/styled";
 import Map from "./Map";
 import ItemBox from "./ItemBox";
+import Fuse from "fuse.js";
+
+const OPTIONS = {
+  shouldSort: true,
+  threshold: 0.6,
+  location: 0,
+  distance: 100,
+  maxPatternLength: 32,
+  minMatchCharLength: 1,
+  keys: ["title", "description"]
+};
 
 // Source data GeoJSON
 const DATA_URL =
@@ -24,7 +35,7 @@ const ITEMS = [
     price: 317,
     image:
       "https://cdn-images.farfetch-contents.com/14/59/99/17/14599917_23150502_1000.jpg",
-    deadline: 157393
+    deadline: 100
   },
   {
     title: "AMI PARIS",
@@ -32,7 +43,7 @@ const ITEMS = [
     price: 306,
     image:
       "https://cdn-images.farfetch-contents.com/13/20/77/56/13207756_21549202_1000.jpg",
-    deadline: 1573
+    deadline: 100
   },
   {
     title: "TOM WOOD",
@@ -51,7 +62,9 @@ const LOCATIONS = [
 ];
 
 function App() {
+  const [search, setSearch] = useState(null);
   const [data, setData] = useState(LOCATIONS);
+  var fuse = new Fuse(ITEMS, OPTIONS);
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -72,12 +85,19 @@ function App() {
     setData([...LOCATIONS]);
   };
 
+  // const onChange = event => {
+  //   console.log("value", event.target.value);
+  //   setSearch(event.target.value);
+  //   console.log("search", search);
+  // };
+
   return (
     <AppContainer container spacing={3}>
       <Global styles={GlobalStyles} />
       <Grid item xs={3}>
         <ItemContainer item xs={12}>
           <TextField
+            // onChange={onChange}
             id="outlined-helperText"
             label="Search"
             margin="normal"
@@ -93,6 +113,13 @@ function App() {
               {...item}
             />
           ))}
+          {/* {(search ? fuse.search(search) : ITEMS).map((item, key) => (
+            // <ItemBox
+            //   onHoverEnter={onHover(key)}
+            //   onHoverLeave={onLeave}
+            //   {...item}
+            // />
+          ))} */}
         </Grid>
       </Grid>
       <MapContainer item xs={9}>

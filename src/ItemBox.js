@@ -10,17 +10,20 @@ function getCountdown(deadline) {
   if (!deadline) return "00:00:00";
 
   const diff = differenceInMilliseconds(deadline, +Date.now());
+
   return format(diff, "HH:mm:ss");
 }
 
 function ItemBox(props) {
-  const [countdownValue, setCountdownValue] = useState(
-    getCountdown(props.deadline)
-  );
+  const [initTimestamp, setInitTimestamp] = useState(null);
+  const [countdownValue, setCountdownValue] = useState();
 
   useEffect(() => {
+    if (!props.deadline) return null;
+
+    setInitTimestamp(+Date.now());
     const deadlineInterval = setInterval(() => {
-      setCountdownValue(getCountdown(props.deadline));
+      setCountdownValue(getCountdown(initTimestamp + props.deadline));
     }, 1000);
 
     return () => {
@@ -52,29 +55,8 @@ function ItemBox(props) {
           </strike>{" "}
           {Math.round(props.price * 0.8)} €
         </Price>
-        <BottomSection container xs={12}>
-          <Grid item xs={6}>
-            <Buy
-              css={css`
-                width: 100%;
-              `}
-              variant="outlined"
-            >
-              BUY
-            </Buy>
-          </Grid>
-          <Grid
-            css={css`
-              display: flexbox;
-              align-items: center;
-              justify-content: center;
-            `}
-            item
-            xs={6}
-          >
-            <Countdown>{countdownValue}</Countdown>
-          </Grid>
-        </BottomSection>
+        <StyledBottomSection />
+        <StyledBottomSection isPlaceholder={true} />
       </Info>
       {!props.deadline ? <Overlay /> : null}
     </StyledItemBox>
@@ -109,13 +91,40 @@ const Price = styled.div`
   font-size: 1.5rem;
 `;
 const BottomSection = styled(Grid)`
-  position: absolute;
+  position: ${props => (!props.isPlaceholder ? "absolute" : null)};
   bottom: 1rem;
   left: 0;
   right: 0;
+  opacity: ${props => (!props.isPlaceholder ? 1 : 0)};
 `;
 const Buy = styled(Button)``;
 const Countdown = styled(Grid)``;
+
+const StyledBottomSection = ({ countdownValue, isPlaceholder }) => (
+  <BottomSection isPlaceholder={isPlaceholder} container xs={12}>
+    <Grid item xs={6}>
+      <Buy
+        css={css`
+          width: 100%;
+        `}
+        variant="outlined"
+      >
+        BUY
+      </Buy>
+    </Grid>
+    <Grid
+      css={css`
+        display: flexbox;
+        align-items: center;
+        justify-content: center;
+      `}
+      item
+      xs={6}
+    >
+      <Countdown>{countdownValue}</Countdown>
+    </Grid>
+  </BottomSection>
+);
 
 const Image = props => (
   <Grid
