@@ -44,6 +44,7 @@ function ItemBox(props) {
       <Image item src={props.image} xs={6} />
       <Info item xs={6}>
         <Title>{props.title}</Title>
+        {/* TODO Only fist letter capital */}
         <Description>{props.description}</Description>
         <Price>
           <strike

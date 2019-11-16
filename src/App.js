@@ -29,6 +29,7 @@ const LOCATION_1 = [24.804905, 60.182799];
 const LOCATION_2 = [24.852896, 60.179485];
 const LOCATION_3 = [24.934519, 60.16687];
 
+// Add more items
 const ITEMS = [
   {
     title: "TOM WOOD",
@@ -36,7 +37,7 @@ const ITEMS = [
     price: 317,
     image:
       "https://cdn-images.farfetch-contents.com/14/59/99/17/14599917_23150502_1000.jpg",
-    deadline: 100
+    deadline: 10000
   },
   {
     title: "AMI PARIS",
@@ -44,16 +45,16 @@ const ITEMS = [
     price: 306,
     image:
       "https://cdn-images.farfetch-contents.com/13/20/77/56/13207756_21549202_1000.jpg",
-    deadline: 100
-  },
-  {
-    title: "TOM WOOD",
-    description: "silver Ice band ring",
-    price: 388,
-    image:
-      "https://cdn-images.farfetch-contents.com/13/54/98/80/13549880_17274963_1000.jpg",
-    deadline: false
+    deadline: 10000
   }
+  // {
+  //   title: "TOM WOOD",
+  //   description: "silver Ice band ring",
+  //   price: 388,
+  //   image:
+  //     "https://cdn-images.farfetch-contents.com/13/54/98/80/13549880_17274963_1000.jpg",
+  //   deadline: false
+  // }
 ];
 
 const LOCATIONS = [
@@ -66,6 +67,7 @@ function App() {
   const [search, setSearch] = useState(null);
   const [data, setData] = useState([]);
   var fuse = new Fuse(ITEMS, OPTIONS);
+  const userItem = getUserItem();
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -96,8 +98,6 @@ function App() {
   //   console.log("search", search);
   // };
 
-  const userItem = getUserItem();
-
   return (
     <AppContainer container spacing={3}>
       <Global styles={GlobalStyles} />
@@ -112,17 +112,26 @@ function App() {
             fullWidth
           />
         </ItemContainer>
+        {/* Scrollable GRID */}
         <Grid item xs={12}>
           {userItem && (
             <ItemBox
-              onHoverEnter={onHover("user")}
+              onHoverEnter={onHover(0)}
               onHoverLeave={onLeave}
               {...userItem}
             />
           )}
+          <div
+            css={css`
+              margin-top: 1rem;
+              padding: 2rem 1rem 1rem;
+            `}
+          >
+            You also may like:
+          </div>
           {ITEMS.map((item, key) => (
             <ItemBox
-              onHoverEnter={onHover(key)}
+              onHoverEnter={onHover(key + 1)}
               onHoverLeave={onLeave}
               {...item}
             />
@@ -144,7 +153,21 @@ function App() {
 }
 
 function getUserItem() {
-  console.log(qs.parse(window.location.search.substr(1)));
+  const query = qs.parse(window.location.search.substr(1));
+
+  if (query.product_json) {
+    const userItem = JSON.parse(query.product_json);
+
+    return {
+      title: userItem.brand,
+      description: userItem.title,
+      price: userItem.price,
+      deadline: 10000,
+      isUserItem: true
+    };
+  } else {
+    return null;
+  }
 }
 
 const GlobalStyles = {
