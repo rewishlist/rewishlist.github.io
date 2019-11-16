@@ -4,7 +4,8 @@ import TextField from "@material-ui/core/TextField";
 /** @jsx jsx */
 import { Global, css, jsx } from "@emotion/core";
 import styled from "@emotion/styled";
-import Map from "./Map.js";
+import Map from "./Map";
+import ItemBox from "./ItemBox";
 
 // Source data GeoJSON
 const DATA_URL =
@@ -16,27 +17,60 @@ const LOCATION_1 = [24.804905, 60.182799];
 const LOCATION_2 = [24.852896, 60.179485];
 const LOCATION_3 = [24.934519, 60.16687];
 
+const ITEMS = [
+  {
+    title: "TOM WOOD",
+    description: "metallic coin pendant sterling silver necklace",
+    price: 317,
+    image:
+      "https://cdn-images.farfetch-contents.com/14/59/99/17/14599917_23150502_1000.jpg",
+    deadline: 157393
+  },
+  {
+    title: "AMI PARIS",
+    description: "Low Top Trainers",
+    price: 306,
+    image:
+      "https://cdn-images.farfetch-contents.com/13/20/77/56/13207756_21549202_1000.jpg",
+    deadline: 1573
+  },
+  {
+    title: "TOM WOOD",
+    description: "silver Ice band ring",
+    price: 388,
+    image:
+      "https://cdn-images.farfetch-contents.com/13/54/98/80/13549880_17274963_1000.jpg",
+    deadline: 15749
+  }
+];
+
+const LOCATIONS = [
+  { from: MY_LOCATION, to: LOCATION_1 },
+  { from: MY_LOCATION, to: LOCATION_2 },
+  { from: MY_LOCATION, to: LOCATION_3 }
+];
+
 function App() {
-  const [data, setData] = useState([
-    { from: MY_LOCATION, to: LOCATION_1 },
-    { from: MY_LOCATION, to: LOCATION_2 },
-    { from: MY_LOCATION, to: LOCATION_3 }
-  ]);
+  const [data, setData] = useState(LOCATIONS);
+
   useEffect(() => {
     if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        console.log(position.coords.latitude, position.coords.longitude);
-      });
+      navigator.geolocation.getCurrentPosition(function(position) {});
     }
-
-    window.update = () => {
-      setData([
-        { from: MY_LOCATION, to: LOCATION_1 },
-        { from: MY_LOCATION, to: LOCATION_2, highlighted: true },
-        { from: MY_LOCATION, to: LOCATION_3 }
-      ]);
-    };
   }, []);
+
+  const onHover = key => {
+    return () => {
+      const newLocations = LOCATIONS.map((item, itemKey) =>
+        key === itemKey ? { ...item, highlighted: true } : { ...item }
+      );
+      setData(newLocations);
+    };
+  };
+
+  const onLeave = () => {
+    setData([...LOCATIONS]);
+  };
 
   return (
     <AppContainer container spacing={3}>
@@ -52,12 +86,13 @@ function App() {
           />
         </ItemContainer>
         <Grid item xs={12}>
-          <ItemBox item xs={12}>
-            item
-          </ItemBox>
-          <ItemBox item xs={12}>
-            item
-          </ItemBox>
+          {ITEMS.map((item, key) => (
+            <ItemBox
+              onHoverEnter={onHover(key)}
+              onHoverLeaver={onLeave}
+              {...item}
+            />
+          ))}
         </Grid>
       </Grid>
       <MapContainer item xs={9}>
@@ -66,7 +101,6 @@ function App() {
     </AppContainer>
   );
 }
-
 const GlobalStyles = {
   html: {
     height: "100%"
@@ -74,7 +108,8 @@ const GlobalStyles = {
   body: {
     margin: 0,
     padding: 0,
-    height: "100%"
+    height: "100%",
+    fontFamily: `"Roboto", "Helvetica", "Arial", sans-serif`
   },
   "#root": {
     height: "100vh"
@@ -89,7 +124,6 @@ const ItemContainer = styled(Grid)`
   background: white;
   padding-left: 1rem;
 `;
-const ItemBox = styled(Grid)``;
 
 const MapContainer = styled(Grid)`
   position: relative;

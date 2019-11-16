@@ -10,28 +10,8 @@ import { scaleQuantile } from "d3-scale";
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiZ2FyeWFuaWtpbiIsImEiOiJjazMxa2M4aW8wNzhzM2JwOWdiYW94dmZqIn0.41wPlZxL13A9TVP2hkF9Zw";
 
-export const inFlowColors = [
-  [255, 255, 204],
-  [199, 233, 180],
-  [127, 205, 187],
-  [65, 182, 196],
-  [29, 145, 192],
-  [34, 94, 168],
-  [12, 44, 132]
-];
-
-const DEFAULT_COLOR = [0, 0, 0];
+const DEFAULT_COLOR = [255, 255, 255];
 const HIGHLIGHTED_COLOR = [106, 255, 121];
-
-export const outFlowColors = [
-  [255, 255, 178],
-  [254, 217, 118],
-  [254, 178, 76],
-  [253, 141, 60],
-  [252, 78, 42],
-  [227, 26, 28],
-  [177, 0, 38]
-];
 
 const INITIAL_VIEW_STATE = {
   zoom: 11,
@@ -142,7 +122,7 @@ class Map extends Component {
 
   render() {
     const {
-      mapStyle = "mapbox://styles/mapbox/light-v9",
+      mapStyle = "mapbox://styles/mapbox/dark-v10",
       userLocation
     } = this.props;
 
