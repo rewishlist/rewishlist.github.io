@@ -7,6 +7,8 @@ import { css, jsx } from "@emotion/core";
 import { format, differenceInMilliseconds } from "date-fns";
 
 function getCountdown(deadline) {
+  if (!deadline) return "00:00:00";
+
   const diff = differenceInMilliseconds(deadline, +Date.now());
   return format(diff, "HH:mm:ss");
 }
@@ -31,6 +33,9 @@ function ItemBox(props) {
       onMouseEnter={props.onHoverEnter}
       onMouseLeave={props.onHoverLeave}
       container
+      css={css`
+        opacity: ${!props.deadline ? 0.6 : 1};
+      `}
       xs={12}
     >
       <Image item src={props.image} xs={6} />
@@ -71,6 +76,7 @@ function ItemBox(props) {
           </Grid>
         </BottomSection>
       </Info>
+      {!props.deadline ? <Overlay /> : null}
     </StyledItemBox>
   );
 }
@@ -142,5 +148,14 @@ const Image = props => (
     </div>
   </Grid>
 );
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+`;
 
 export default ItemBox;

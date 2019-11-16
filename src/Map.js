@@ -10,8 +10,8 @@ import { scaleQuantile } from "d3-scale";
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiZ2FyeWFuaWtpbiIsImEiOiJjazMxa2M4aW8wNzhzM2JwOWdiYW94dmZqIn0.41wPlZxL13A9TVP2hkF9Zw";
 
-const DEFAULT_COLOR = [255, 255, 255];
-const HIGHLIGHTED_COLOR = [106, 255, 121];
+const DEFAULT_COLOR = [130, 130, 130];
+const HIGHLIGHTED_COLOR = [255, 136, 0];
 
 const INITIAL_VIEW_STATE = {
   zoom: 11,
@@ -102,7 +102,7 @@ class Map extends Component {
   // }
 
   _renderLayers() {
-    const { data, strokeWidth = 2 } = this.props;
+    const { data, strokeWidth = 4 } = this.props;
 
     return [
       new ArcLayer({
@@ -122,7 +122,7 @@ class Map extends Component {
 
   render() {
     const {
-      mapStyle = "mapbox://styles/mapbox/dark-v10",
+      mapStyle = "mapbox://styles/mapbox/light-v9",
       userLocation
     } = this.props;
 

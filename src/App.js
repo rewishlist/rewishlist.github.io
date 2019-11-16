@@ -40,7 +40,7 @@ const ITEMS = [
     price: 388,
     image:
       "https://cdn-images.farfetch-contents.com/13/54/98/80/13549880_17274963_1000.jpg",
-    deadline: 15749
+    deadline: false
   }
 ];
 
@@ -89,7 +89,7 @@ function App() {
           {ITEMS.map((item, key) => (
             <ItemBox
               onHoverEnter={onHover(key)}
-              onHoverLeaver={onLeave}
+              onHoverLeave={onLeave}
               {...item}
             />
           ))}
