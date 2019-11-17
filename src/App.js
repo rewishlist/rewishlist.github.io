@@ -47,14 +47,6 @@ const ITEMS = [
       "https://cdn-images.farfetch-contents.com/13/20/77/56/13207756_21549202_1000.jpg",
     deadline: 10000
   }
-  // {
-  //   title: "TOM WOOD",
-  //   description: "silver Ice band ring",
-  //   price: 388,
-  //   image:
-  //     "https://cdn-images.farfetch-contents.com/13/54/98/80/13549880_17274963_1000.jpg",
-  //   deadline: false
-  // }
 ];
 
 const LOCATIONS = [
@@ -73,7 +65,6 @@ function App() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(function(position) {});
     }
-
     setTimeout(() => {
       setData(LOCATIONS);
     }, 2000);
@@ -158,10 +149,12 @@ function getUserItem() {
   if (query.product_json) {
     const userItem = JSON.parse(query.product_json);
 
+    console.log(userItem);
     return {
       title: userItem.brand,
       description: userItem.title,
       price: userItem.price,
+      image: userItem.image_url,
       deadline: 10000,
       isUserItem: true
     };
