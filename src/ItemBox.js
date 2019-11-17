@@ -56,8 +56,8 @@ function ItemBox(props) {
           </strike>{" "}
           {Math.round(props.price * 0.8)} €
         </Price>
-        <StyledBottomSection />
         <StyledBottomSection isPlaceholder={true} />
+        <StyledBottomSection onClick={props.onClick} />
       </Info>
       {!props.deadline ? <Overlay /> : null}
     </StyledItemBox>
@@ -69,6 +69,8 @@ const StyledItemBox = styled(Grid)`
   margin: 1rem 0;
   border-top: 2px solid transparent;
   border-bottom: 2px solid transparent;
+  padding: 2rem 0;
+  cursor: pointer;
 
   &:hover {
     transition: border-color 0.35s ease-in-out;
@@ -102,10 +104,11 @@ const BottomSection = styled(Grid)`
 const Buy = styled(Button)``;
 const Countdown = styled(Grid)``;
 
-const StyledBottomSection = ({ countdownValue, isPlaceholder }) => (
+const StyledBottomSection = ({ countdownValue, isPlaceholder, onClick }) => (
   <BottomSection isPlaceholder={isPlaceholder} container xs={12}>
     <Grid item xs={6}>
       <Buy
+        onClick={onClick}
         css={css`
           width: 100%;
         `}

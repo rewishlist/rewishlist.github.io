@@ -113,17 +113,9 @@ class Map extends Component {
         getSourcePosition: d => d.from,
         getTargetPosition: d => d.to,
         getSourceColor: d =>
-          d.isUsetItem
-            ? USER_ITEM_COLOR
-            : d.highlighted
-            ? HIGHLIGHTED_COLOR
-            : DEFAULT_COLOR,
+          d.isUsetItem || d.highlighted ? HIGHLIGHTED_COLOR : DEFAULT_COLOR,
         getTargetColor: d =>
-          d.isUsetItem
-            ? USER_ITEM_COLOR
-            : d.highlighted
-            ? HIGHLIGHTED_COLOR
-            : DEFAULT_COLOR,
+          d.isUsetItem || d.highlighted ? HIGHLIGHTED_COLOR : DEFAULT_COLOR,
         getWidth: strokeWidth
       })
     ];
@@ -131,7 +123,7 @@ class Map extends Component {
 
   render() {
     const {
-      mapStyle = "mapbox://styles/mapbox/light-v9",
+      mapStyle = "mapbox://styles/garyanikin/ck32bdhkj20dc1cqiaiuw5t1z",
       userLocation
     } = this.props;
 
