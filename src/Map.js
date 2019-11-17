@@ -12,6 +12,7 @@ const MAPBOX_TOKEN =
 
 const DEFAULT_COLOR = [130, 130, 130];
 const HIGHLIGHTED_COLOR = [255, 136, 0];
+const USER_ITEM_COLOR = [255, 81, 100];
 
 const INITIAL_VIEW_STATE = {
   zoom: 11,
@@ -112,9 +113,17 @@ class Map extends Component {
         getSourcePosition: d => d.from,
         getTargetPosition: d => d.to,
         getSourceColor: d =>
-          d.highlighted ? HIGHLIGHTED_COLOR : DEFAULT_COLOR,
+          d.isUsetItem
+            ? USER_ITEM_COLOR
+            : d.highlighted
+            ? HIGHLIGHTED_COLOR
+            : DEFAULT_COLOR,
         getTargetColor: d =>
-          d.highlighted ? HIGHLIGHTED_COLOR : DEFAULT_COLOR,
+          d.isUsetItem
+            ? USER_ITEM_COLOR
+            : d.highlighted
+            ? HIGHLIGHTED_COLOR
+            : DEFAULT_COLOR,
         getWidth: strokeWidth
       })
     ];

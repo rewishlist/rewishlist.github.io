@@ -81,19 +81,20 @@ const Info = styled(Grid)`
 `;
 const Title = styled.div`
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   margin-top: 0.5rem;
 `;
 const Description = styled.div`
   margin-top: 0.5rem;
+  font-size: 0.8rem;
 `;
 const Price = styled.div`
   margin-top: 1rem;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
 `;
 const BottomSection = styled(Grid)`
   position: ${props => (!props.isPlaceholder ? "absolute" : null)};
-  bottom: 1rem;
+  bottom: 0;
   left: 0;
   right: 0;
   opacity: ${props => (!props.isPlaceholder ? 1 : 0)};
